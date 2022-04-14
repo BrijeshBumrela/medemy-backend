@@ -1,3 +1,11 @@
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
+import { getCourseBySlug } from "../services/course";
 
-export const getCourse = (req: Request, res: Response) => {};
+const router = express.Router();
+
+router.get(":slug", async (req: Request, res: Response) => {
+  const slug = req.params["slug"];
+  return getCourseBySlug(slug);
+});
+
+export default router;

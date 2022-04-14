@@ -1,16 +1,10 @@
 import express from "express";
-import prisma from "./prisma";
+import { authRoutes, courseRoutes } from "./routes";
 
 const app = express();
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  const user = await prisma.user.findMany({
-    include: {
-      educator: true,
-    },
-  });
-  return res.json(user);
-});
+app.use("/auth", authRoutes);
+app.use("/course", courseRoutes);
 
 export default app;

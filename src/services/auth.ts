@@ -31,7 +31,7 @@ export const signup = async ({
   return user;
 };
 
-export const signin = async ({
+export const login = async ({
   email,
   password,
 }: {
