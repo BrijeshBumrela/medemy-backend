@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  first_name String?
+  last_name  String?
+  password   String
+  email      String    @unique
+  educator   Educator?
+  student    Student?
+}
+
+model Educator {
+  id      Int      @id @default(autoincrement())
+  bio     String?
+  user    User     @relation(fields: [userId], references: [id])
+  userId  Int      @unique
+  courses Course[]
+}
+
+model Student {
+  id      Int             @id @default(autoincrement())
+  user    User            @relation(fields: [userId], references: [id])
+  userId  Int             @unique
+  courses StudentCourse[]
+}
+
+model Course {
+  id               Int        @id @default(autoincrement())
+  name             String     @unique
+  slug             String     @unique
+  duration         Int
+  subheading       String?
+  difficulty       Difficulty @default(ALL)
+  actual_price     Float
+  discounted_price Float
+  language         String
+  learnings        String[]
+  requirements     String[]
+  description      String
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+
+  author    Educator @relation(fields: [author_id], references: [id])
+  author_id Int
+}
+
+model StudentCourse {
+
+  id Int @id @default(autoincrement())
+
+  student    Student @relation(fields: [student_id], references: [id])
+  student_id Int
+
+  successful Boolean @default(false)
+  rating     Int     @default(0)
+
+  invoice StudentInvoice[]
+}
+
+model StudentInvoice {
+  id                Int           @id @default(autoincrement())
+  invoice_id        String
+  student_course    StudentCourse @relation(fields: [student_course_id], references: [id])
+  student_course_id Int
+  successful        Boolean       @default(false)
+}
+
+enum Difficulty {
+  ALL
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+}
